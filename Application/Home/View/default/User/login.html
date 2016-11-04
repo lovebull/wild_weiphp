@@ -4,30 +4,30 @@
 <script type="text/javascript" src="__STATIC__/qrcode/jquery.qrcode.js"></script>
 <!-- 头部 -->
 <div class="login_header">
-	
+
     <div class="log_wrap">
         <a href="/" title="WeiPHP"><img class="logo" src="__IMG__/logo.png"/></a>
     </div>
-    
+
 </div>
 <!-- 介绍 -->
 
     	<div class="top_content">
         	<div class="log_wrap">
-            	<div class="top_content_r">
+            	<!-- <div class="top_content_r">
                 	<img src="__IMG__/about/img/banner_pic.png?20150723"/>
-                </div>
+                </div> -->
             	<section class="login_box">
                   <form class="login-form" action="__SELF__" method="post">
                           <div class="form_body" id="input_login" style="display:<php>if(C('SCAN_LOGIN')) echo 'none';</php> ">
-                                <h6>欢迎使用WeiPHP!</h6>
+                                <h6>欢迎使用!</h6>
                                 <div class="input_panel">
                                   <div class="control-group">
                                     <label class="control-label" for="inputEmail">用户名</label>
                                     <div class="controls">
                                       <span class="fa fa-user"></span>
                                       <input type="text" id="inputEmail" class="span3" placeholder="请输入用户名"  ajaxurl="/user/checkUserNameUnique.html" errormsg="请填写1-16位用户名" nullmsg="请填写用户名" datatype="*1-16" value="" name="username">
-										
+
                                     </div>
                                   </div>
                                   <div class="control-group">
@@ -46,11 +46,11 @@
                                       <a href="javascript:;" class="reloadverify_a">换一张?</a>
                                     </div>
                                   </div>
-                                  
+
                                   <php> } </php>
                                </div>
                               <php>if(C('WEB_SITE_VERIFY')) { </php>
-                              
+
                               <div class="control-group">
                                 <label class="control-label"></label>
                                 <div class="controls" style="margin-top:10px">
@@ -86,16 +86,16 @@
                                <div class="o_p"><a href="javascript:void(0)" onclick="$('#input_login').show();$('#scan_login').hide();">原注册用户登录入口</a></div>
                               </div>
                           <php> } </php>
-                       </form> 
+                       </form>
                 </section>
             </div>
         </div>
-        
-    	
+
+
 </block>
 <block name="script">
-	<script type="text/javascript">       
-    	$(document)		   
+	<script type="text/javascript">
+    	$(document)
 	    	.ajaxStart(function(){
 	    		$("button:submit").addClass("log-in").attr("disabled", true);
 	    	})
@@ -136,8 +136,8 @@
 				$(this).parent().find('.fa').css('color','#aaa');
 				})
 		});
-		
-<php>if(C('SCAN_LOGIN')) { </php>		
+
+<php>if(C('SCAN_LOGIN')) { </php>
 	setInterval(function(){
 		$.post("{:U('login')}",{},function(res){
 			if(res==1){
@@ -147,6 +147,6 @@
 	},3000);
 <php> } </php>
 
-	$('#login_body').height($(window).height());	
+	$('#login_body').height($(window).height());
 	</script>
 </block>
