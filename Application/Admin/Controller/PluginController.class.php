@@ -16,22 +16,22 @@ namespace Admin\Controller;
 class PluginController extends AdminController {
 	public function _initialize() {
 		$this->assign ( '_extra_menu', array (
-				'已装插件后台' => D ( 'Plugin' )->getAdminList () 
+				'已装插件后台' => D ( 'Plugin' )->getAdminList ()
 		) );
 		parent::_initialize ();
 	}
-	
+
 	// 创建向导首页
 	public function create() {
 		if (! is_writable ( ONETHINK_PLUGIN_PATH ))
 			$this->error ( '您没有创建目录写入权限，无法使用此功能' );
-		
+
 		$hooks = M ( 'hooks' )->where ( 'name!="weixin"' )->field ( 'name,description' )->select ();
 		$this->assign ( 'Hooks', $hooks );
 		$this->meta_title = '创建向导';
 		$this->display ( 'create' );
 	}
-	
+
 	// 预览
 	public function preview($output = true) {
 		$data = $_POST;
@@ -47,7 +47,7 @@ class PluginController extends AdminController {
 str;
 			$extend [] = $custom_config;
 		}
-		
+
 		$admin_list = trim ( $data ['admin_list'] );
 		if ($data ['has_adminlist'] && $admin_list) {
 			$admin_list = <<<str
@@ -59,7 +59,7 @@ str;
 str;
 			$extend [] = $admin_list;
 		}
-		
+
 		$custom_adminlist = trim ( $data ['custom_adminlist'] );
 		if ($data ['has_adminlist'] && $custom_adminlist) {
 			$custom_adminlist = <<<str
@@ -69,7 +69,7 @@ str;
 str;
 			$extend [] = $custom_adminlist;
 		}
-		
+
 		$extend = implode ( '', $extend );
 		$hook = '';
 		foreach ( $data ['hook'] as $value ) {
@@ -81,7 +81,7 @@ str;
 
 str;
 		}
-		
+
 		$tpl = <<<str
 <?php
 
@@ -153,7 +153,7 @@ str;
 		$files [] = "{$addon_dir}{$addon_name}";
 		if ($data ['has_config'] == 1)
 			$files [] = $addon_dir . 'config.php';
-		
+
 		if ($data ['has_outurl']) {
 			$files [] = "{$addon_dir}Controller/";
 			$files [] = "{$addon_dir}Controller/{$data['info']['name']}Controller.class.php";
@@ -166,13 +166,13 @@ str;
 		$custom_config = trim ( $data ['custom_config'] );
 		if ($custom_config)
 			$data [] = "{$addon_dir}{$custom_config}";
-		
+
 		$custom_adminlist = trim ( $data ['custom_adminlist'] );
 		if ($custom_adminlist)
 			$data [] = "{$addon_dir}{$custom_adminlist}";
-		
+
 		create_dir_or_files ( $files );
-		
+
 		// 写文件
 		file_put_contents ( "{$addon_dir}{$addon_name}", $addonFile );
 		if ($data ['has_outurl']) {
@@ -204,19 +204,19 @@ class {$data['info']['name']}Model extends Model{
 str;
 			file_put_contents ( "{$addon_dir}Model/{$data['info']['name']}Model.class.php", $addonModel );
 		}
-		
+
 		if ($data ['has_config'] == 1)
 			file_put_contents ( "{$addon_dir}config.php", $data ['config'] );
-		
+
 		$this->success ( '创建成功', U ( 'index' ) );
 	}
-	
+
 	/**
 	 * 插件列表
 	 */
 	public function index() {
 		$this->meta_title = '插件列表';
-		
+
 		$list = D ( 'Plugin' )->getList ();
 		$request = ( array ) I ( 'request.' );
 		$total = $list ? count ( $list ) : 1;
@@ -224,7 +224,7 @@ str;
 		$page = new \Think\Page ( $total, $listRows, $request );
 		$voList = array_slice ( $list, $page->firstRow, $page->listRows );
 		$p = $page->show ();
-		
+
 		$this->assign ( '_list', $voList );
 		$this->assign ( '_page', $p ? $p : '' );
 		// 记录当前列表页的cookie
@@ -266,11 +266,11 @@ str;
 		if (isset ( $_REQUEST [$key] )) {
 			$map [$key] = array (
 					'like',
-					'%' . $_GET [$key] . '%' 
+					'%' . $_GET [$key] . '%'
 			);
 			unset ( $_REQUEST [$key] );
 		}
-		
+
 		if (isset ( $model )) {
 			$model = D ( "Plugins://{$name}/{$model}" );
 			// 条件搜索
@@ -294,7 +294,7 @@ str;
 				$field = explode ( ',', $val [0] );
 				$value = array (
 						'field' => $field,
-						'title' => $val [1] 
+						'title' => $val [1]
 				);
 				if (isset ( $val [2] )) {
 					// 链接信息
@@ -321,7 +321,7 @@ str;
 			$this->assign ( 'custom_adminlist', $this->fetch ( $addon->addon_path . $addon->custom_adminlist ) );
 		$this->display ( 'adminlist' );
 	}
-	
+
 	/**
 	 * 启用插件
 	 */
@@ -329,12 +329,12 @@ str;
 		$id = I ( 'id' );
 		$msg = array (
 				'success' => '启用成功',
-				'error' => '启用失败' 
+				'error' => '启用失败'
 		);
 		S ( 'hooks', null );
 		$this->resume ( 'plugin', "id={$id}", $msg );
 	}
-	
+
 	/**
 	 * 禁用插件
 	 */
@@ -342,18 +342,18 @@ str;
 		$id = I ( 'id' );
 		$msg = array (
 				'success' => '禁用成功',
-				'error' => '禁用失败' 
+				'error' => '禁用失败'
 		);
 		S ( 'hooks', null );
 		$this->forbid ( 'plugin', "id={$id}", $msg );
 	}
-	
+
 	/**
 	 * 设置插件页面
 	 */
 	public function config() {
 		$id = ( int ) I ( 'id' );
-		$addon = M ( 'addons' )->find ( $id );
+		$addon = M ( 'plugin' )->find ( $id );
 		if (! $addon)
 			$this->error ( '插件未安装' );
 		$addon_class = get_addon_class ( $addon ['name'] );
@@ -384,7 +384,7 @@ str;
 			$this->assign ( 'custom_config', $this->fetch ( $addon ['addon_path'] . $addon ['custom_config'] ) );
 		$this->display ();
 	}
-	
+
 	/**
 	 * 保存插件设置
 	 */
@@ -398,7 +398,7 @@ str;
 			$this->error ( '保存失败' );
 		}
 	}
-	
+
 	/**
 	 * 解析数据库语句函数
 	 *
@@ -412,7 +412,7 @@ str;
 		if ($tablepre != "onethink_")
 			$sql = str_replace ( "onethink_", $tablepre, $sql );
 		$sql = preg_replace ( "/TYPE=(InnoDB|MyISAM|MEMORY)( DEFAULT CHARSET=[^; ]+)?/", "ENGINE=\\1 DEFAULT CHARSET=utf8", $sql );
-		
+
 		if ($r_tablepre != $s_tablepre)
 			$sql = str_replace ( $s_tablepre, $r_tablepre, $sql );
 		$sql = str_replace ( "\r", "\n", $sql );
@@ -433,7 +433,7 @@ str;
 		}
 		return $ret;
 	}
-	
+
 	/**
 	 * 获取插件所需的钩子是否存在，没有则新增
 	 *
@@ -459,7 +459,7 @@ str;
 			}
 		}
 	}
-	
+
 	/**
 	 * 删除钩子
 	 *
@@ -469,7 +469,7 @@ str;
 	public function deleteHook($hook) {
 		$model = M ( 'hooks' );
 		$condition = array (
-				'name' => $hook 
+				'name' => $hook
 		);
 		$model->where ( $condition )->delete ();
 		S ( 'hooks', null );
@@ -495,13 +495,13 @@ str;
 		$data = $addonsModel->create ( $info );
 		if (! $data)
 			$this->error ( $addonsModel->getError () );
-			
+
 			// isset($data['has_adminlist']) || $data['has_adminlist'] = intval(is_array($addons->admin_list) && $addons->admin_list !== array());
 			// isset ( $data ['type'] ) || $data ['type'] = intval ( file_exists ( ONETHINK_ADDON_PATH . $data ['name'] . '/Model/WeixinAddonModel.class.php' ) );
-		
+
 		if ($addonsModel->add ( $data )) {
 			$config = array (
-					'config' => json_encode ( $addons->getConfig () ) 
+					'config' => json_encode ( $addons->getConfig () )
 			);
 			$addonsModel->where ( "name='{$addon_name}'" )->save ( $config );
 			$hooks_update = D ( 'Hooks' )->updateHooks ( $addon_name );
@@ -516,7 +516,7 @@ str;
 			$this->error ( '写入插件数据失败' );
 		}
 	}
-	
+
 	/**
 	 * 卸载插件
 	 */
@@ -549,7 +549,7 @@ str;
 			$this->success ( '卸载成功' );
 		}
 	}
-	
+
 	/**
 	 * 钩子列表
 	 */
@@ -558,7 +558,7 @@ str;
 		$map = $fields = array ();
 		$list = $this->lists ( D ( "Hooks" )->field ( $fields ), $map );
 		int_to_string ( $list, array (
-				'type' => C ( 'HOOKS_TYPE' ) 
+				'type' => C ( 'HOOKS_TYPE' )
 		) );
 		// 记录当前列表页的cookie
 		Cookie ( '__forward__', $_SERVER ['REQUEST_URI'] );
@@ -570,7 +570,7 @@ str;
 		$this->meta_title = '新增钩子';
 		$this->display ( 'edithook' );
 	}
-	
+
 	// 钩子出编辑挂载插件页面
 	public function edithook($id) {
 		$hook = M ( 'hooks' )->field ( true )->find ( $id );
@@ -578,7 +578,7 @@ str;
 		$this->meta_title = '编辑钩子';
 		$this->display ( 'edithook' );
 	}
-	
+
 	// 超级管理员删除钩子
 	public function delhook($id) {
 		if (M ( 'hooks' )->delete ( $id ) !== false) {
@@ -617,11 +617,11 @@ str;
 			$_addons = ucfirst ( parse_name ( $_addons, 1 ) );
 			$_controller = parse_name ( $_controller, 1 );
 		}
-		
+
 		$TMPL_PARSE_STRING = C ( 'TMPL_PARSE_STRING' );
 		$TMPL_PARSE_STRING ['__ADDONROOT__'] = __ROOT__ . "/Plugins/{$_addons}";
 		C ( 'TMPL_PARSE_STRING', $TMPL_PARSE_STRING );
-		
+
 		if (! empty ( $_addons ) && ! empty ( $_controller ) && ! empty ( $_action )) {
 			$Addons = A ( "Plugins://{$_addons}/{$_controller}" )->$_action ();
 		} else {
@@ -652,12 +652,12 @@ str;
 			$data || $this->error ( '数据不存在！' );
 			$this->assign ( 'data', $data );
 		}
-		
+
 		if (IS_POST) {
 			// 获取模型的字段信息
 			if (! $addonModel->create ())
 				$this->error ( $addonModel->getError () );
-			
+
 			if ($id) {
 				$flag = $addonModel->save ();
 				if ($flag !== false)
@@ -686,11 +686,11 @@ str;
 	}
 	public function del($id = '', $name) {
 		$ids = array_unique ( ( array ) I ( 'ids', 0 ) );
-		
+
 		if (empty ( $ids )) {
 			$this->error ( '请选择要操作的数据!' );
 		}
-		
+
 		$class = get_addon_class ( $name );
 		if (! class_exists ( $class ))
 			$this->error ( '插件不存在' );
@@ -704,12 +704,12 @@ str;
 			if (! $addonModel)
 				$this->error ( '模型无法实列化' );
 		}
-		
+
 		$map = array (
 				'id' => array (
 						'in',
-						$ids 
-				) 
+						$ids
+				)
 		);
 		if ($addonModel->where ( $map )->delete ()) {
 			$this->success ( '删除成功' );
