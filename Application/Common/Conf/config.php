@@ -27,6 +27,8 @@ return array(
 		// 系统数据加密设置
 		'DATA_AUTH_KEY' => '.NcqQ-?VF|(8IG+vEX<0mrBxgH^@sSntjd]Tl{/U', // 默认数据加密KEY
 
+        'TMPL_EXCEPTION_FILE'   =>  APP_PATH.'/Home/View/default/Public/exception.html' , // 异常页面的模板文
+
 		// 调试配置
 		'SHOW_PAGE_TRACE' => false,
 
